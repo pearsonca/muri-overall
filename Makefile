@@ -1,28 +1,77 @@
-SHELL = /bin/sh
+SHELL=/bin/sh
 
+RPATH=/usr/bin/Rscript
+
+DATAPATH=./input
+RESPATH=./output
+PREPATH=../montreal-digest
 SIMPATH=../scala-commsim
-DIGESTPATH=../montreal-process
+DIGESTPATH=../montreal-reprocess
+START=/target/start
 
-$(SIMPATH)/target/start: $(SIMPATH)/src
+RDT=rdata
+RDS=rds
+JSN=json
+
+.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience
+
+convenience: $(RESPATH)/location_lifetimes.png $(DATAPATH) $(RESPATH)
+
+$(SIMPATH)$(START): $(SIMPATH)/src
 	@cd $(SIMPATH); sbt start-script
 
-$(DIGESTPATH)/target/start: $(DIGESTPATH)/src
+$(DIGESTPATH)$(START): $(DIGESTPATH)/src
 	@cd $(DIGESTPATH); sbt start-script
 
-.PHONY: starts clean simulate
+$(DATAPATH):
+	ln -s $(in) $(DATAPATH)
 
-starts: $(SIMPATH)/target/start $(DIGESTPATH)/target/start
+$(RESPATH):
+	ln -s $(out) $(RESPATH)
 
-clean:
-	rm $(SIMPATH)/target/start
-	rm $(DIGESTPATH)/target/start
+starts: $(SIMPATH)$(START) $(DIGESTPATH)$(START)
 
-stage:
-	# do stuff with generating input csvs
+clean-scala:
+	rm -f $(SIMPATH)$(START)
+	rm -f $(DIGESTPATH)$(START)
 
-simulate: $(SIMPATH)/target/start
-	@cd $(SIMPATH); target/start input/$(userfile) $(location) $(shape) $(freq)
+clean-rdata:
+	rm -i $(DATAPATH)/*-data.$(RDT)
 
-process: $(DIGESTPATH)/target/start
-	@cd $(DIGESTPATH)
-	@target/start $(ARGS)
+clean-rds:
+	rm -i $(DATAPATH)/*.$(RDS)
+
+$(DATAPATH)/%.$(RDT): $(PREPATH)/%-data.R
+	@cd $(PREPATH); $(RPATH) $<
+
+$(DATAPATH)/users.Rdata: $(DATAPATH)/lifetimeGroups.Rdata $(DATAPATH)/fourierPowerGroups.Rdata $(DATAPATH)/vMFGroups.Rdata
+
+
+
+
+$(DATAPATH)/%.$(RDS): $(PREPATH)/%-dt.R
+	$(RPATH) $^ $@
+
+$(DATAPATH)/raw-input.$(RDS): $(DATAPATH)/merged.o
+
+$(DATAPATH)/filtered-input.$(RDS): $(DATAPATH)/raw-input.$(RDS) $(DATAPATH)/assumptions.$(JSN)
+
+$(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/remap-user-ids.$(RDS): $(DATAPATH)/filtered-input.$(RDS)
+
+$(DATAPATH)/remapped-input.$(RDS): $(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/remap-user-ids.$(RDS) $(DATAPATH)/filtered-input.$(RDS)
+
+
+
+
+$(RESPATH)/%.png: $(PREPATH)/%-plot.R
+	$(RPATH) $^ $@
+
+$(RESPATH)/location_lifetimes.png: $(DATAPATH)/remapped-input.$(RDS)
+
+
+
+simulate: $(SIMPATH)$(START)
+	@cd $(SIMPATH); ./$(START) input/$(userfile) $(location) $(shape) $(freq)
+
+process: $(DIGESTPATH)$(START)
+	@cd $(DIGESTPATH); ./$(START) $(ARGS)
