@@ -2,6 +2,8 @@ SHELL=/bin/sh
 
 RPATH=/usr/bin/Rscript
 
+GITREF=https://github.com/pearsonca/
+
 DATAPATH=./input
 RESPATH=./output
 PREPATH=../montreal-digest
@@ -15,7 +17,16 @@ JSN=json
 
 .PHONY: starts clean-scala clean-rdata clean-rds simulate convenience
 
-convenience: $(RESPATH)/location_lifetimes.png $(DATAPATH) $(RESPATH)
+convenience: $(RESPATH)/location_lifetimes.png $(DATAPATH) $(RESPATH) $(PREPATH)
+
+$(PREPATH):
+	@cd ..; git clone $(GITREF)montreal-digest.git
+
+$(SIMPATH)/src:
+	@cd ..; git clone $(GITREF)scala-commsim.git
+
+$(DIGESTPATH)/src:
+	@cd ..; git clone $(GITREF)montreal-reprocess.git
 
 $(SIMPATH)$(START): $(SIMPATH)/src
 	@cd $(SIMPATH); sbt start-script
