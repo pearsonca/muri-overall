@@ -14,10 +14,11 @@ START=/target/start
 RDT=rdata
 RDS=rds
 JSN=json
+IMG=png
 
 .PHONY: starts clean-scala clean-rdata clean-rds simulate convenience
 
-convenience: $(RESPATH)/location_lifetimes.png $(DATAPATH) $(RESPATH) $(PREPATH)
+convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(RESPATH)/location-creation-rate.$(IMG)
 
 $(PREPATH):
 	@cd ..; git clone $(GITREF)montreal-digest.git
@@ -52,6 +53,12 @@ clean-rdata:
 clean-rds:
 	rm -i $(DATAPATH)/*.$(RDS)
 
+clean-img:
+	rm -i $(RESPATH)/*.$(IMG)
+
+
+
+
 $(DATAPATH)/%.$(RDT): $(PREPATH)/%-data.R
 	@cd $(PREPATH); $(RPATH) $<
 
@@ -71,14 +78,13 @@ $(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/remap-user-ids.$(RDS): $(DATAP
 
 $(DATAPATH)/remapped-input.$(RDS): $(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/remap-user-ids.$(RDS) $(DATAPATH)/filtered-input.$(RDS)
 
+$(DATAPATH)/location-lifetimes.$(RDS): $(DATAPATH)/remapped-input.$(RDS)
 
 
-
-$(RESPATH)/%.png: $(PREPATH)/%-plot.R
+$(RESPATH)/%.$(IMG): $(PREPATH)/%-plot.R
 	$(RPATH) $^ $@
 
-$(RESPATH)/location_lifetimes.png: $(DATAPATH)/remapped-input.$(RDS)
-
+$(RESPATH)/location-lifetimes.$(IMG) $(RESPATH)/location-creation-rate.$(IMG): $(DATAPATH)/location-lifetimes.$(RDS)
 
 
 simulate: $(SIMPATH)$(START)
