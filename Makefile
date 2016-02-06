@@ -18,7 +18,7 @@ IMG=png
 
 .PHONY: starts clean-scala clean-rdata clean-rds simulate convenience
 
-convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(RESPATH)/location-creation-rate.$(IMG)
+convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(DATAPATH)/training-locations.$(RDS)
 
 $(PREPATH):
 	@cd ..; git clone $(GITREF)montreal-digest.git
@@ -80,11 +80,17 @@ $(DATAPATH)/remapped-input.$(RDS): $(DATAPATH)/remap-location-ids.$(RDS) $(DATAP
 
 $(DATAPATH)/location-lifetimes.$(RDS): $(DATAPATH)/remapped-input.$(RDS)
 
+$(DATAPATH)/training-locations.$(RDS): $(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/parameters.$(JSN)
+
+$(DATAPATH)/location-peaks.$(RDS): $(DATAPATH)/training-locations.$(RDS) $(DATAPATH)/remapped-input.$(RDS)
+
+
+
 
 $(RESPATH)/%.$(IMG): $(PREPATH)/%-plot.R
 	$(RPATH) $^ $@
 
-$(RESPATH)/location-lifetimes.$(IMG) $(RESPATH)/location-creation-rate.$(IMG): $(DATAPATH)/location-lifetimes.$(RDS)
+$(RESPATH)/location-lifetimes.$(IMG) $(RESPATH)/location-creation-rate.$(IMG) $(RESPATH)/location-life-distro.$(IMG): $(DATAPATH)/location-lifetimes.$(RDS)
 
 
 simulate: $(SIMPATH)$(START)
