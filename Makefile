@@ -16,9 +16,15 @@ RDS := rds
 JSN := json
 IMG := png
 
-.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience
+.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience updates
 
 convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(DATAPATH)/training-locations.$(RDS)
+
+updates:
+	git pull
+	@cd $(PREPATH); git pull
+	@cd $(DIGESTPATH); git pull
+	@cd $(SIMPATH); git pull
 
 $(PREPATH):
 	@cd ..; git clone $(GITREF)montreal-digest.git
