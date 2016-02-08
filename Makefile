@@ -2,19 +2,19 @@ SHELL=/bin/sh
 
 RPATH=/usr/bin/Rscript
 
-GITREF=https://github.com/pearsonca/
+GITREF := https://github.com/pearsonca/
 
-DATAPATH=./input
-RESPATH=./output
-PREPATH=../montreal-digest
-SIMPATH=../scala-commsim
-DIGESTPATH=../montreal-reprocess
-START=/target/start
+DATAPATH   := ./input
+RESPATH    := ./output
+PREPATH    := ../montreal-digest
+SIMPATH    := ../scala-commsim
+DIGESTPATH := ../montreal-reprocess
+START      := /target/start
 
-RDT=rdata
-RDS=rds
-JSN=json
-IMG=png
+RDT := rdata
+RDS := rds
+JSN := json
+IMG := png
 
 .PHONY: starts clean-scala clean-rdata clean-rds simulate convenience
 
@@ -58,7 +58,6 @@ clean-img:
 
 
 
-
 $(DATAPATH)/%.$(RDT): $(PREPATH)/%-data.R
 	@cd $(PREPATH); $(RPATH) $<
 
@@ -76,13 +75,38 @@ $(DATAPATH)/filtered-input.$(RDS): $(DATAPATH)/raw-input.$(RDS) $(DATAPATH)/assu
 
 $(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/remap-user-ids.$(RDS): $(DATAPATH)/filtered-input.$(RDS)
 
-$(DATAPATH)/remapped-input.$(RDS): $(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/remap-user-ids.$(RDS) $(DATAPATH)/filtered-input.$(RDS)
+$(DATAPATH)/remapped-input.$(RDS): $(addprefix $(DATAPATH)/,$(addsuffix .$(RDS), remap-location-ids remap-user-ids filtered-input))
 
 $(DATAPATH)/location-lifetimes.$(RDS): $(DATAPATH)/remapped-input.$(RDS)
 
 $(DATAPATH)/training-locations.$(RDS): $(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/parameters.$(JSN)
 
 $(DATAPATH)/location-peaks.$(RDS): $(DATAPATH)/training-locations.$(RDS) $(DATAPATH)/remapped-input.$(RDS)
+
+$(DATAPATH)/source-sample-%.$(RDS): $(PREPATH)/sample-events.R $(DATAPATH)/remapped-input.$(RDS)
+	$(RPATH) $^ $* $@
+
+SAMPLEINTERVALS := 1 2 3 4 5
+RUNS := $(wildcard $(RESPATH)/run-*)
+
+$(RESPATH)/run-%: $(RESPATH)/%.pbs
+	rm -ir $@
+	mkdir $@
+
+source-samples: $(foreach i,$(SAMPLEINTERVALS),$(DATAPATH)/source-sample-$(i).$(RDS))
+
+define sample-events-template
+$(1)/sample-events-%/: $(DIGESTPATH)/sample-synthetic-events.R
+	$(RPATH) $$^ $$* $$@
+endef
+
+$(foreach r,$(RUNS),$(eval $(call sample-events-template,$(r))))
+
+
+
+
+
+
 
 
 
