@@ -87,7 +87,9 @@ $(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/remap-user-ids.$(RDS): $(DATAP
 
 $(DATAPATH)/remapped-input.$(RDS): $(addprefix $(DATAPATH)/,$(addsuffix .$(RDS), remap-location-ids remap-user-ids filtered-input))
 
-$(DATAPATH)/location-lifetimes.$(RDS): $(DATAPATH)/remapped-input.$(RDS)
+$(DATAPATH)/raw-location-lifetimes.$(RDS): $(DATAPATH)/raw-input.$(RDS)
+
+$(DATAPATH)/location-lifetimes.$(RDS): $(DATAPATH)/raw-location-lifetimes.$(RDS) $(DATAPATH)/remap-location-ids.$(RDS)
 
 $(DATAPATH)/training-locations.$(RDS): $(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/parameters.$(JSN)
 
@@ -113,6 +115,20 @@ $(RESPATH)/run-%/: $(RESPATH)/run-%.pbs $(SIMPATH)$(START)
 $(RESPATH)/process-%/: $(RESPATH)/process-%.pbs $(DIGESTPATH)$(START) $(RESPATH)/run-%/
 	rm -fr $@ && mkdir $@
 	@cd $(DIGESTPATH); $<
+
+define run-samples-template
+$(1)%-cc.$(RDS) $(1)%-cu.$(RDS): $(DIGESTPATH)/rbinarize.R $(1)%-cc.csv $(1)%-cu.csv
+	$(RPATH) $$^
+
+$(1)all-converted: $(foreach cstar, $(wildcard $(1)*-c*.csv), $(subst csv,rds,$(cstar)))
+
+.PHONY: $(1)all-converted
+endef
+
+$(foreach r, $(wildcard $(RESPATH)/process-*/), $(eval $(call run-samples-template, $(r))))
+
+#$(RESPATH)/process-%/combined.$(RDS): $(DIGESTPATH)/synthesize.R $(RESPATH)/process-%/*cc.csv $(RESPATH)/process-%/*cu.csv
+#	$(RPATH) $^
 
 $(RESPATH)/analyze-%/: $(RESPATH)/analyze-%.pbs $(SIMPATH)/analyze.R $(SIMPATH)$(START) $(RESPATH)/analyze-%/ $(DATAPATH)/raw-input.$(RDS) $(DATAPATH)/raw-pairs.$(RDS)
 	rm -fr $@ && mkdir $@
