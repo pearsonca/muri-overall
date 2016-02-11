@@ -22,9 +22,9 @@ convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(DATAPATH)/training-locations.$(
 
 updates:
 	git pull
-	@cd $(PREPATH); git pull
-	@cd $(DIGESTPATH); git pull
-	@cd $(SIMPATH); git pull
+	@cd $(PREPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
+	@cd $(DIGESTPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
+	@cd $(SIMPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
 
 $(PREPATH):
 	@cd ..; git clone $(GITREF)montreal-digest.git
@@ -35,10 +35,10 @@ $(SIMPATH)/src:
 $(DIGESTPATH)/src:
 	@cd ..; git clone $(GITREF)montreal-reprocess.git
 
-$(SIMPATH)$(START): $(SIMPATH)/src
-	@cd $(SIMPATH); sbt start-script
+$(SIMPATH)$(START): $(shell find $(SIMPATH)/src -type f)
+	@cd $(SIMPATH); sbt start-script;
 
-$(DIGESTPATH)$(START): $(DIGESTPATH)/src
+$(DIGESTPATH)$(START): $(shell find $(DIGESTPATH)/src -type f)
 	@cd $(DIGESTPATH); sbt start-script
 
 $(DATAPATH):
@@ -77,6 +77,10 @@ $(DATAPATH)/%.$(RDS): $(PREPATH)/%-dt.R
 
 $(DATAPATH)/raw-input.$(RDS): $(DATAPATH)/merged.o
 
+$(DATAPATH)/paired.o: $(DATAPATH)/merged.o
+
+$(DATAPATH)/raw-pairs.$(RDS): $(DATAPATH)/paired.o
+
 $(DATAPATH)/filtered-input.$(RDS): $(DATAPATH)/raw-input.$(RDS) $(DATAPATH)/assumptions.$(JSN)
 
 $(DATAPATH)/remap-location-ids.$(RDS) $(DATAPATH)/remap-user-ids.$(RDS): $(DATAPATH)/filtered-input.$(RDS)
@@ -89,15 +93,30 @@ $(DATAPATH)/training-locations.$(RDS): $(DATAPATH)/remap-location-ids.$(RDS) $(D
 
 $(DATAPATH)/location-peaks.$(RDS): $(DATAPATH)/training-locations.$(RDS) $(DATAPATH)/remapped-input.$(RDS)
 
+
+
+
+
+
+
+
 $(DATAPATH)/source-sample-%.$(RDS): $(PREPATH)/sample-events.R $(DATAPATH)/remapped-input.$(RDS)
 	$(RPATH) $^ $* $@
 
 SAMPLEINTERVALS := 1 2 3 4 5
 RUNS := $(wildcard $(RESPATH)/run-*)
 
-$(RESPATH)/run-%: $(RESPATH)/%.pbs
-	rm -ir $@
-	mkdir $@
+$(RESPATH)/run-%/: $(RESPATH)/run-%.pbs $(SIMPATH)$(START)
+	rm -fr $@ && mkdir $@
+	@cd $(SIMPATH); $<
+
+$(RESPATH)/process-%/: $(RESPATH)/process-%.pbs $(DIGESTPATH)$(START) $(RESPATH)/run-%/
+	rm -fr $@ && mkdir $@
+	@cd $(DIGESTPATH); $<
+
+$(RESPATH)/analyze-%/: $(RESPATH)/analyze-%.pbs $(SIMPATH)/analyze.R $(SIMPATH)$(START) $(RESPATH)/analyze-%/ $(DATAPATH)/raw-input.$(RDS) $(DATAPATH)/raw-pairs.$(RDS)
+	rm -fr $@ && mkdir $@
+	@cd $(DIGESTPATH); $<
 
 source-samples: $(foreach i,$(SAMPLEINTERVALS),$(DATAPATH)/source-sample-$(i).$(RDS))
 
