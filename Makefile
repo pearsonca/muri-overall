@@ -23,22 +23,15 @@ convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(DATAPATH)/training-locations.$(
 
 updates: $(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH)
 	git pull
-	cd $(PREPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
-	cd $(DIGESTPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
-	cd $(SIMPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
-	cd $(POSTER); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
+	cd $(PREPATH); git pull;
+	cd $(DIGESTPATH); git pull;
+	cd $(SIMPATH); git pull;
+	cd $(POSTER); git pull;
 
-$(POSTER):
-	@cd ..; git clone $(GITREF)epi_research_day2016.git
+$(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH):
+	cd .. && git clone $(GITREF)$(subst ../,,$@).git && cd $(subst ../,,$@) && ln -s $(in) $(DATAPATH) && ln -s $(out) $(RESPATH)
 
-$(PREPATH):
-	@cd ..; git clone $(GITREF)montreal-digest.git
-
-$(SIMPATH)/src:
-	@cd ..; git clone $(GITREF)scala-commsim.git
-
-$(DIGESTPATH)/src:
-	@cd ..; git clone $(GITREF)montreal-reprocess.git
+%/src: %
 
 $(SIMPATH)$(START): $(shell find $(SIMPATH)/src -type f)
 	@cd $(SIMPATH); sbt start-script;
