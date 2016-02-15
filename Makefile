@@ -21,12 +21,15 @@ IMG := png
 
 convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(DATAPATH)/training-locations.$(RDS)
 
-updates:
+updates: $(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH)
 	git pull
-	@cd $(PREPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
-	@cd $(DIGESTPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
-	@cd $(SIMPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
-	@cd $(POSTER); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
+	cd $(PREPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
+	cd $(DIGESTPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
+	cd $(SIMPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
+	cd $(POSTER); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
+
+$(POSTER):
+	@cd ..; git clone $(GITREF)epi_research_day2016.git
 
 $(PREPATH):
 	@cd ..; git clone $(GITREF)montreal-digest.git
