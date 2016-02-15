@@ -116,6 +116,8 @@ $(RESPATH)/process-%/: $(RESPATH)/process-%.pbs $(DIGESTPATH)$(START) $(RESPATH)
 	rm -fr $@ && mkdir $@
 	@cd $(DIGESTPATH); $<
 
+## TODO: rather than processing on a one-by-one basis, convert all eligible items at once since script will support inputs
+
 define run-samples-template
 $(1)%-cc.$(RDS) $(1)%-cu.$(RDS): $(DIGESTPATH)/rbinarize.R $(1)%-cc.csv $(1)%-cu.csv
 	$(RPATH) $$^
