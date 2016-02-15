@@ -9,6 +9,7 @@ RESPATH    := ./output
 PREPATH    := ../montreal-digest
 SIMPATH    := ../scala-commsim
 DIGESTPATH := ../montreal-reprocess
+POSTER     := ../epi_research_day2016
 START      := /target/start
 
 RDT := rdata
@@ -25,6 +26,7 @@ updates:
 	@cd $(PREPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
 	@cd $(DIGESTPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
 	@cd $(SIMPATH); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
+	@cd $(POSTER); git pull; ln -s $(in) $(DATAPATH); ln -s $(out) $(RESPATH)
 
 $(PREPATH):
 	@cd ..; git clone $(GITREF)montreal-digest.git
