@@ -17,7 +17,7 @@ RDS := rds
 JSN := json
 IMG := png
 
-.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience updates
+.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience updates status
 
 convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(DATAPATH)/training-locations.$(RDS)
 
@@ -27,6 +27,13 @@ updates: $(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH)
 	cd $(DIGESTPATH); git pull;
 	cd $(SIMPATH); git pull;
 	cd $(POSTER); git pull;
+
+status:
+	git status
+	cd $(PREPATH); git status;
+	cd $(DIGESTPATH); git status;
+	cd $(SIMPATH); git status;
+	cd $(POSTER); git status;
 
 $(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH):
 	cd .. && git clone $(GITREF)$(subst ../,,$@).git && cd $(subst ../,,$@) && ln -s $(in) $(DATAPATH) && ln -s $(out) $(RESPATH)
