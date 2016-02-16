@@ -29,11 +29,11 @@ updates: $(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH)
 	cd $(POSTER); git pull;
 
 status:
-	git status
-	cd $(PREPATH); git status;
-	cd $(DIGESTPATH); git status;
-	cd $(SIMPATH); git status;
-	cd $(POSTER); git status;
+	git status -uno
+	cd $(PREPATH); git status -uno;
+	cd $(DIGESTPATH); git status -uno;
+	cd $(SIMPATH); git status -uno;
+	cd $(POSTER); git status -uno;
 
 $(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH):
 	cd .. && git clone $(GITREF)$(subst ../,,$@).git && cd $(subst ../,,$@) && ln -s $(in) $(DATAPATH) && ln -s $(out) $(RESPATH)
