@@ -46,11 +46,16 @@ $(SIMPATH)$(START): $(shell find $(SIMPATH)/src -type f)
 $(DIGESTPATH)$(START): $(shell find $(DIGESTPATH)/src -type f)
 	@cd $(DIGESTPATH); sbt start-script
 
-$(DATAPATH):
-	ln -s $(in) $(DATAPATH)
+define link_data
+cd $(1); ln -sf $(2)$(3);
 
-$(RESPATH):
-	ln -s $(out) $(RESPATH)
+endef
+
+$(DATAPATH) $(RESPATH): $(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH)
+	touch $@
+	$(eval TMP:=$(abspath $@))
+	ln -sf $(tar) $@
+	$(foreach p, $^, $(call link_data,$(p),$(TMP), $@))
 
 starts: $(SIMPATH)$(START) $(DIGESTPATH)$(START)
 
@@ -68,6 +73,12 @@ clean-img:
 	rm -i $(RESPATH)/*.$(IMG)
 
 
+
+
+
+~/.Renviron: Makefile
+	@touch $@
+	@if grep -Fxq "GITPROJHOME=$(realpath ../)" $@; then echo ".Renviron already contains GITPROJHOME."; else printf 'GITPROJHOME=%s\n' $(realpath ../) >> $@; fi
 
 $(DATAPATH)/%.$(RDT): $(PREPATH)/%-data.R
 	@cd $(PREPATH); $(RPATH) $<
