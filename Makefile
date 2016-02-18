@@ -12,6 +12,8 @@ DIGESTPATH := ../montreal-reprocess
 POSTER     := ../epi_research_day2016
 START      := /target/start
 
+REPOS := $(PREPATH) $(SIMPATH) $(DIGESTPATH) $(POSTER)
+
 RDT := rdata
 RDS := rds
 JSN := json
@@ -21,22 +23,26 @@ IMG := png
 
 convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(DATAPATH)/training-locations.$(RDS)
 
-updates: $(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH)
+define gpull
+cd $(1); git pull;
+
+endef
+
+updates: $(REPOS)
 	git pull
-	cd $(PREPATH); git pull;
-	cd $(DIGESTPATH); git pull;
-	cd $(SIMPATH); git pull;
-	cd $(POSTER); git pull;
+	$(foreach p,$^,$(call gpull, $(p)))
 
-status:
+define gstatus
+cd $(1); git status -uno;
+
+endef
+
+status: $(REPOS)
 	git status -uno
-	cd $(PREPATH); git status -uno;
-	cd $(DIGESTPATH); git status -uno;
-	cd $(SIMPATH); git status -uno;
-	cd $(POSTER); git status -uno;
+	$(foreach p,$^,$(call gstatus, $(p)))
 
-$(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH):
-	cd .. && git clone $(GITREF)$(subst ../,,$@).git && cd $(subst ../,,$@) && ln -s $(in) $(DATAPATH) && ln -s $(out) $(RESPATH)
+$(REPOS):
+	cd .. && git clone $(GITREF)$(subst ../,,$@).git
 
 %/src: %
 
@@ -51,7 +57,7 @@ cd $(1); ln -sf $(2)$(3);
 
 endef
 
-$(DATAPATH) $(RESPATH): $(POSTER) $(PREPATH) $(SIMPATH) $(DIGESTPATH)
+$(DATAPATH) $(RESPATH): $(REPOS)
 	touch $@
 	$(eval TMP:=$(abspath $@))
 	ln -sf $(tar) $@
