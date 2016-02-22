@@ -1,6 +1,6 @@
 SHELL=/bin/sh
 
-RPATH=/usr/bin/Rscript
+RPATH=$(shell which Rscript)
 
 GITREF := https://github.com/pearsonca/
 
