@@ -8,7 +8,7 @@
 #PBS -M cap10@ufl.edu
 #PBS -l walltime=24:00:00
 #PBS -l nodes=1:ppn=16
-#PBS -l mem=32G
+#PBS -l pmem=2gb
 
 cd /scratch/lfs/cap10/muri-overall
 make input/background-clusters/spin-glass/30-30.rds
