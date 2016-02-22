@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -q test
+
 #PBS -r n
 #PBS -N bg-clusters
 #PBS -o bg-clusters.o
