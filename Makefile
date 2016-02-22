@@ -174,7 +174,7 @@ $(DATAPATH)/background-clusters/spin-glass: | $(DATAPATH)/background-clusters/
 	mkdir $@
 
 $(DATAPATH)/background-clusters/spin-glass/%.$(RDS): $(PREPATH)/background-spinglass.R $(DATAPATH)/raw-pairs.$(RDS) | $(DATAPATH)/background-clusters/spin-glass/
-	mkdir $(DATAPATH)/background-clusters/spin-glass/$(basename $(notdir $@))
+	mkdir -p $(DATAPATH)/background-clusters/spin-glass/$(basename $(notdir $@))
 	$(RPATH) $^ $(subst -, ,$(basename $(notdir $@))) $@
 	$(RPATH) $(PREPATH)/combine_clusters.R $@
 	rm $(DATAPATH)/background-clusters/spin-glass/$(basename $(notdir $@))/*
