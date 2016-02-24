@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #PBS -r n
-#PBS -N bg-clusters
-#PBS -o bg-clusters.o
-#PBS -e bg-clusters.err
+#PBS -N bg-clusters-30-30
+#PBS -o bg-clusters-30-30.o
+#PBS -e bg-clusters-30-30.err
 #PBS -m a
 #PBS -M cap10@ufl.edu
 #PBS -l walltime=24:00:00
