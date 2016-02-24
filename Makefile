@@ -173,13 +173,17 @@ $(DATAPATH)/background-clusters:
 $(DATAPATH)/background-clusters/spin-glass: | $(DATAPATH)/background-clusters/
 	mkdir $@
 
+$(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS): $(PREPATH)/precompute-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/%.$(RDS) | $(PREPATH)/accumulate-spinglass-persistence-scores.R
+	mkdir -p $(DATAPATH)/background-clusters/spin-glass/$(basename $(notdir $@))
+	$(RPATH) $^
+	$(RPATH) $(PREPATH)/accumulate-spinglass-persistence-scores.R $@
+	rm $(DATAPATH)/background-clusters/spin-glass/$(basename $(notdir $@))/*
+
 $(DATAPATH)/background-clusters/spin-glass/%.$(RDS): $(PREPATH)/background-spinglass.R $(DATAPATH)/raw-pairs.$(RDS) | $(DATAPATH)/background-clusters/spin-glass/
 	mkdir -p $(DATAPATH)/background-clusters/spin-glass/$(basename $(notdir $@))
 	$(RPATH) $^ $(subst -, ,$(basename $(notdir $@))) $@
 	$(RPATH) $(PREPATH)/combine_clusters.R $@
 	rm $(DATAPATH)/background-clusters/spin-glass/$(basename $(notdir $@))/*
-
-
 
 
 
