@@ -1,8 +1,8 @@
 #!/bin/bash
 #PBS -r n
-#PBS -N bg-acc-15-15
-#PBS -o bg-acc-15-15.o
-#PBS -e bg-acc-15-15.err
+#PBS -N bg-pc-15-15
+#PBS -o bg-pc-15-15.o
+#PBS -e bg-pc-15-15.err
 #PBS -m a
 #PBS -M cap10@ufl.edu
 #PBS -l walltime=8:00:00
