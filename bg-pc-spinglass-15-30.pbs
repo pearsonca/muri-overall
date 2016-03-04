@@ -1,0 +1,14 @@
+#!/bin/bash
+#PBS -r n
+#PBS -N bg-acc-15-30
+#PBS -o bg-acc-15-30.o
+#PBS -e bg-acc-15-30.err
+#PBS -m a
+#PBS -M cap10@ufl.edu
+#PBS -l walltime=8:00:00
+#PBS -l nodes=1:ppn=16
+#PBS -l pmem=2gb
+
+module load gcc/5.2.0 R/3.2.2
+cd /scratch/lfs/cap10/muri-overall
+make input/background-clusters/spin-glass/15-30-pc.rds
