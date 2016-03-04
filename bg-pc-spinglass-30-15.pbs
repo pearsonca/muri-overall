@@ -11,4 +11,4 @@
 
 module load gcc/5.2.0 R/3.2.2
 cd /scratch/lfs/cap10/muri-overall
-make input/background-clusters/spin-glass/30-15-pc.rds
+make input/background-clusters/spin-glass/30-15-pc
