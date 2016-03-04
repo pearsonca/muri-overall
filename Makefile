@@ -178,17 +178,22 @@ $(DATAPATH)/background-clusters/spin-glass/%-base: $(PREPATH)/background-spingla
 	$(RPATH) $^ $(subst -, ,$(basename $(subst -base,,$(notdir $@)))) $@
 	# tar up directory, rm contents?
 
-$(DATAPATH)/background-clusters/spin-glass/%-base.$(RDS): $(PREPATH)/combine_clusters.R $(DATAPATH)/background-clusters/spin-glass/%-base
+$(DATAPATH)/background-clusters/spin-glass/%-base.$(RDS): $(PREPATH)/combine_clusters.R | $(DATAPATH)/background-clusters/spin-glass/%-base
 	$(RPATH) $^ $@
 
 $(DATAPATH)/background-clusters/spin-glass/%-acc: $(PREPATH)/precompute-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/%-base.$(RDS) | $(DATAPATH)/background-clusters/spin-glass
 	mkdir -p $@
 	$(RPATH) $^ $@
 
-$(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS): $(PREPATH)/accumulate-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/%-acc
+$(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS): $(PREPATH)/accumulate-spinglass-persistence-scores.R | $(DATAPATH)/background-clusters/spin-glass/%-acc
 	$(RPATH) $^ $@
-	# rm $(DATAPATH)/background-clusters/spin-glass/$(basename $(notdir $@))/*
 
+$(DATAPATH)/background-clusters/spin-glass/%-pc: $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS)
+	mkdir -p $@
+	$(RPATH) $^ $@
+
+#$(DATAPATH)/background-clusters/spin-glass/%-pc.$(RDS): $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS)
+#	$(RPATH) $^ $@
 
 
 $(RESPATH)/%.$(IMG): $(PREPATH)/%-plot.R
