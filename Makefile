@@ -167,30 +167,46 @@ endef
 
 $(foreach r,$(RUNS),$(eval $(call sample-events-template,$(r))))
 
+
+clean-bg-%:
+	rm -ir $(DATAPATH)/background-clusters/spin-glass/base-$*
+	rm -ir $(DATAPATH)/background-clusters/spin-glass/acc-$*
+	rm -ir $(DATAPATH)/background-clusters/spin-glass/pc-$*
+
 $(DATAPATH)/background-clusters:
 	mkdir $@
 
 $(DATAPATH)/background-clusters/spin-glass: | $(DATAPATH)/background-clusters
 	mkdir $@
 
-$(DATAPATH)/background-clusters/spin-glass/%-base: $(PREPATH)/background-spinglass.R $(DATAPATH)/raw-pairs.$(RDS)
+PCL=10 # pre compute limit default
+
+bg-spinglass-base-%.pbs: ./base_pbs.sh
+	rm -f $@; touch $@
+	$> $@ $*
+
+$(DATAPATH)/background-clusters/spin-glass/base-%: $(PREPATH)/background-spinglass.R $(DATAPATH)/raw-pairs.$(RDS) | $(DATAPATH)/background-clusters/spin-glass
 	mkdir -p $@
-	$(RPATH) $^ $(subst -, ,$(basename $(subst -base,,$(notdir $@)))) $@
-	# tar up directory, rm contents?
+	$(RPATH) $^ $(subst -, ,$(basename $(subst base-,,$(notdir $@)))) $@$(if $(PCL), -m $(PCL))
 
-$(DATAPATH)/background-clusters/spin-glass/%-base.$(RDS): $(PREPATH)/combine_clusters.R | $(DATAPATH)/background-clusters/spin-glass/%-base
+
+bg-spinglass-acc-%.pbs: ./acc_pbs.sh
+	rm -f $@; touch $@
+	$> $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/acc-$* | wc -l))
+
+$(DATAPATH)/background-clusters/spin-glass/acc-%: $(PREPATH)/precompute-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/base-% | $(DATAPATH)/background-clusters/spin-glass
+	mkdir -p $(dir $@)
 	$(RPATH) $^ $@
 
-$(DATAPATH)/background-clusters/spin-glass/%-acc: $(PREPATH)/precompute-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/%-base.$(RDS) | $(DATAPATH)/background-clusters/spin-glass
-	mkdir -p $@
-	$(RPATH) $^ $@
 
-$(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS): $(PREPATH)/accumulate-spinglass-persistence-scores.R | $(DATAPATH)/background-clusters/spin-glass/%-acc
-	$(RPATH) $^ $@
+bg-spinglass-pc-%.pbs:
+	rm -f $@; touch $@
+	./pc_pbs.sh $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/$*-acc | wc -l))
 
-$(DATAPATH)/background-clusters/spin-glass/%-pc/*.$(RDS): $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/%-acc
+$(DATAPATH)/background-clusters/spin-glass/pc-%: $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/acc-%
 	mkdir -p $(dir $@)
 	$(RPATH) $< $@
+
 
 #$(DATAPATH)/background-clusters/spin-glass/%-pc.$(RDS): $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS)
 #	$(RPATH) $^ $@
@@ -207,12 +223,6 @@ simulate: $(SIMPATH)$(START)
 
 process: $(DIGESTPATH)$(START)
 	@cd $(DIGESTPATH); ./$(START) $(ARGS)
-
-.PHONY: *.pbs
-
-bg-pc-spinglass-%.pbs:
-	rm -f $@; touch $@
-	./pc_pbs.sh $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/$*-acc | wc -l))
 
 
 $(POSTER)/%.pdf: $(POSTER)/%.Rnw $(POSTER)/*.bib
