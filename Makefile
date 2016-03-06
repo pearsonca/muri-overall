@@ -183,7 +183,7 @@ PCL=10 # pre compute limit default
 
 bg-spinglass-base-%.pbs: ./base_pbs.sh
 	rm -f $@; touch $@
-	$> $@ $*
+	$< $@ $*
 
 $(DATAPATH)/background-clusters/spin-glass/base-%: $(PREPATH)/background-spinglass.R $(DATAPATH)/raw-pairs.$(RDS) | $(DATAPATH)/background-clusters/spin-glass
 	mkdir -p $@
@@ -192,16 +192,16 @@ $(DATAPATH)/background-clusters/spin-glass/base-%: $(PREPATH)/background-spingla
 
 bg-spinglass-acc-%.pbs: ./acc_pbs.sh
 	rm -f $@; touch $@
-	$> $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/acc-$* | wc -l))
+	$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/acc-$* | wc -l))
 
 $(DATAPATH)/background-clusters/spin-glass/acc-%: $(PREPATH)/precompute-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/base-% | $(DATAPATH)/background-clusters/spin-glass
 	mkdir -p $(dir $@)
 	$(RPATH) $^ $@
 
 
-bg-spinglass-pc-%.pbs:
+bg-spinglass-pc-%.pbs: ./pc_pbs.sh
 	rm -f $@; touch $@
-	./pc_pbs.sh $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/$*-acc | wc -l))
+	$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/$*-acc | wc -l))
 
 $(DATAPATH)/background-clusters/spin-glass/pc-%: $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/acc-%
 	mkdir -p $(dir $@)
