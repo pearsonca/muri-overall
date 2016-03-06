@@ -12,5 +12,5 @@ cat > $1 <<EOF
 
 module load gcc/5.2.0 R/3.2.2
 cd /scratch/lfs/cap10/muri-overall
-make input/background-clusters/spin-glass/base-$2
+make PCL= input/background-clusters/spin-glass/base-$2
 EOF

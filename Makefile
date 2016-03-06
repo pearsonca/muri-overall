@@ -169,9 +169,9 @@ $(foreach r,$(RUNS),$(eval $(call sample-events-template,$(r))))
 
 
 clean-bg-%:
-	rm -ir $(DATAPATH)/background-clusters/spin-glass/base-$*
-	rm -ir $(DATAPATH)/background-clusters/spin-glass/acc-$*
-	rm -ir $(DATAPATH)/background-clusters/spin-glass/pc-$*
+	rm -rf $(DATAPATH)/background-clusters/spin-glass/base-$*
+	rm -rf $(DATAPATH)/background-clusters/spin-glass/acc-$*
+	rm -rf $(DATAPATH)/background-clusters/spin-glass/pc-$*
 
 $(DATAPATH)/background-clusters:
 	mkdir $@
