@@ -19,7 +19,7 @@ RDS := rds
 JSN := json
 IMG := png
 
-.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience updates status
+.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience updates status clean-pbs
 
 convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(DATAPATH)/training-locations.$(RDS)
 
