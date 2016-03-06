@@ -13,5 +13,6 @@ cat > $1 <<EOF
 
 module load gcc/5.2.0 R/3.2.2
 cd /scratch/lfs/cap10/muri-overall
-make input/background-clusters/spin-glass/acc-$2/\$PBS_ARRAYID.rds
+tar=\$(printf 'input/background-clusters/spin-glass/acc-$2/%03d.rds' \$PBS_ARRAYID)
+make \$tar
 EOF

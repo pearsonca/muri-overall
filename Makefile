@@ -192,7 +192,7 @@ $(DATAPATH)/background-clusters/spin-glass/base-%: $(PREPATH)/background-spingla
 
 bg-spinglass-acc-%.pbs: acc_pbs.sh
 	rm -f $@; touch $@
-	./$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/acc-$* | wc -l))
+	./$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/base-$* | wc -l))
 
 $(DATAPATH)/background-clusters/spin-glass/acc-%: $(PREPATH)/precompute-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/base-% | $(DATAPATH)/background-clusters/spin-glass
 	mkdir -p $(dir $@)
