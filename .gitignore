@@ -2,3 +2,4 @@ input
 output
 *.err
 *.o
+*.pbs
