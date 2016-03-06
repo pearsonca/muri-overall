@@ -199,6 +199,9 @@ $(DATAPATH)/background-clusters/spin-glass/acc-%: $(PREPATH)/precompute-spinglas
 	$(RPATH) $^ $@
 
 
+clean-pbs:
+	rm *.pbs
+
 bg-spinglass-pc-%.pbs: ./pc_pbs.sh
 	rm -f $@; touch $@
 	$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/$*-acc | wc -l))
