@@ -168,6 +168,8 @@ endef
 $(foreach r,$(RUNS),$(eval $(call sample-events-template,$(r))))
 
 
+## SHARED PBS STUFF
+
 clean-bg-%:
 	rm -rf $(DATAPATH)/background-clusters/spin-glass/base-$*
 	rm -rf $(DATAPATH)/background-clusters/spin-glass/acc-$*
@@ -181,10 +183,16 @@ $(DATAPATH)/background-clusters/spin-glass: | $(DATAPATH)/background-clusters
 
 PCL=10 # pre compute limit default
 
+clean-pbs:
+	rm *.pbs
+
+
+
 bg-spinglass-base-%.pbs: base_pbs.sh
 	rm -f $@; touch $@
 	./$< $@ $*
 
+# this make target is a whole directory of files
 $(DATAPATH)/background-clusters/spin-glass/base-%: $(PREPATH)/background-spinglass.R $(DATAPATH)/raw-pairs.$(RDS) | $(DATAPATH)/background-clusters/spin-glass
 	mkdir -p $@
 	$(RPATH) $^ $(subst -, ,$(basename $(subst base-,,$(notdir $@)))) $@$(if $(PCL), -m $(PCL))
@@ -194,13 +202,20 @@ bg-spinglass-acc-%.pbs: acc_pbs.sh
 	rm -f $@; touch $@
 	./$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/base-$* | wc -l))
 
+# this make target is for individual files, corresponding to those in base-%
 $(DATAPATH)/background-clusters/spin-glass/acc-%: $(PREPATH)/precompute-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/base-% | $(DATAPATH)/background-clusters/spin-glass
 	mkdir -p $(dir $@)
 	$(RPATH) $^ $@
 
+bg-spinglass-agg-%.pbs: agg_pbs.sh
+	rm -f $@; touch $@
+	./$< $@ $*
 
-clean-pbs:
-	rm *.pbs
+$(DATAPATH)/background-clusters/spin-glass/agg-%: $(PREPATH)/accumulate-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/acc-%/*
+	mkdir -p $@
+	$(RPATH) $< $(subst agg,acc,$@) $@
+
+
 
 bg-spinglass-pc-%.pbs: pc_pbs.sh
 	rm -f $@; touch $@
