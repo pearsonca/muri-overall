@@ -173,6 +173,7 @@ $(foreach r,$(RUNS),$(eval $(call sample-events-template,$(r))))
 clean-bg-%:
 	rm -rf $(DATAPATH)/background-clusters/spin-glass/base-$*
 	rm -rf $(DATAPATH)/background-clusters/spin-glass/acc-$*
+	rm -rf $(DATAPATH)/background-clusters/spin-glass/agg-$*
 	rm -rf $(DATAPATH)/background-clusters/spin-glass/pc-$*
 
 $(DATAPATH)/background-clusters:
@@ -186,6 +187,13 @@ PCL=10 # pre compute limit default
 clean-pbs:
 	rm *.pbs
 
+check-err:
+	more *.err* | grep -i warning
+	more *.err* | grep -i error
+
+clean-hpc:
+	rm *.err*
+	rm *.o
 
 
 bg-spinglass-base-%.pbs: base_pbs.sh
@@ -211,7 +219,9 @@ bg-spinglass-agg-%.pbs: agg_pbs.sh
 	rm -f $@; touch $@
 	./$< $@ $*
 
-$(DATAPATH)/background-clusters/spin-glass/agg-%: $(PREPATH)/accumulate-spinglass-persistence-scores.R $(shell ls $(DATAPATH)/background-clusters/spin-glass/acc-%/)
+.SECONDEXPANSION
+
+$(DATAPATH)/background-clusters/spin-glass/agg-%: $(PREPATH)/accumulate-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/acc-$$*/*
 	mkdir -p $@
 	$(RPATH) $< $(subst agg,acc,$@) $@
 
