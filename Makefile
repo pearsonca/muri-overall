@@ -188,8 +188,7 @@ clean-pbs:
 	rm *.pbs
 
 check-err:
-	more *.err* | grep -i warning
-	more *.err* | grep -i error
+	ls *err* && ! more *err* | grep -i error && ! more *err* | grep -i warning
 
 clean-hpc:
 	rm *.err*
