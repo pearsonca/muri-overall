@@ -192,7 +192,7 @@ check-err:
 
 clean-hpc:
 	rm *.err*
-	rm *.o
+	rm *.o*
 
 
 bg-spinglass-base-%.pbs: base_pbs.sh
