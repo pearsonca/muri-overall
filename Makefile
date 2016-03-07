@@ -219,7 +219,7 @@ bg-spinglass-agg-%.pbs: agg_pbs.sh
 	rm -f $@; touch $@
 	./$< $@ $*
 
-.SECONDEXPANSION
+.SECONDEXPANSION:
 
 $(DATAPATH)/background-clusters/spin-glass/agg-%: $(PREPATH)/accumulate-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/acc-$$*/*
 	mkdir -p $@
