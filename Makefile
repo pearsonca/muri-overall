@@ -235,7 +235,7 @@ $(DATAPATH)/background-clusters/spin-glass/pc-%: $(PREPATH)/spinglass-persistenc
 	$(RPATH) $^ $@
 
 $(RESPATH)/background-clusters/spin-glass/plot-pc-%.png: $(PREPATH)/plot-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/pc-%/*
-	$(RPATH) $> $(dir $(last $^)) $@
+	$(RPATH) $> $(dir $(lastword $^)) $@
 
 
 #$(DATAPATH)/background-clusters/spin-glass/%-pc.$(RDS): $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS)
