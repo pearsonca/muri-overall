@@ -176,10 +176,10 @@ clean-bg-%:
 	rm -rf $(DATAPATH)/background-clusters/spin-glass/agg-$*
 	rm -rf $(DATAPATH)/background-clusters/spin-glass/pc-$*
 
-$(DATAPATH)/background-clusters:
+%/background-clusters:
 	mkdir $@
 
-$(DATAPATH)/background-clusters/spin-glass: | $(DATAPATH)/background-clusters
+%/background-clusters/spin-glass: | %/background-clusters
 	mkdir $@
 
 PCL=10 # pre compute limit default
@@ -233,6 +233,9 @@ bg-spinglass-pc-%.pbs: pc_pbs.sh
 $(DATAPATH)/background-clusters/spin-glass/pc-%: $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/agg-%
 	mkdir -p $(dir $@)
 	$(RPATH) $^ $@
+
+$(RESPATH)/background-clusters/spin-glass/plot-pc-%.png: $(PREPATH)/plot-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/pc-%/*
+	$(RPATH) $> $(dir $(last $^)) $@
 
 
 #$(DATAPATH)/background-clusters/spin-glass/%-pc.$(RDS): $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS)
