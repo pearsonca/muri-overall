@@ -6,7 +6,7 @@ cat > $1 <<EOF
 #PBS -e bg-pc-$2.err
 #PBS -m a
 #PBS -M cap10@ufl.edu
-#PBS -l walltime=8:00:00
+#PBS -l walltime=24:00:00
 #PBS -l nodes=1:ppn=1
 #PBS -l pmem=2gb
 #PBS -t 1-$3
