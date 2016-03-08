@@ -218,17 +218,15 @@ bg-spinglass-agg-%.pbs: agg_pbs.sh
 	rm -f $@; touch $@
 	./$< $@ $*
 
+bg-spinglass-pc-%.pbs: pc_pbs.sh
+	rm -f $@; touch $@
+	./$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/agg-$* | wc -l))
+
 .SECONDEXPANSION:
 
 $(DATAPATH)/background-clusters/spin-glass/agg-%: $(PREPATH)/accumulate-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/acc-$$*/*
 	mkdir -p $@
 	$(RPATH) $< $(subst agg,acc,$@) $@
-
-
-
-bg-spinglass-pc-%.pbs: pc_pbs.sh
-	rm -f $@; touch $@
-	./$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/agg-$* | wc -l))
 
 $(DATAPATH)/background-clusters/spin-glass/pc-%: $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/agg-%
 	mkdir -p $(dir $@)
