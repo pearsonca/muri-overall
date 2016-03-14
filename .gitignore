@@ -3,3 +3,4 @@ output
 *.err
 *.o
 *.pbs
+.Rhistory
