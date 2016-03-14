@@ -19,7 +19,7 @@ RDS := rds
 JSN := json
 IMG := png
 
-.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience updates status clean-pbs
+.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience updates status clean-pbs touchdates
 
 convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(DATAPATH)/training-locations.$(RDS)
 
@@ -235,6 +235,8 @@ $(DATAPATH)/background-clusters/spin-glass/pc-%: $(PREPATH)/spinglass-persistenc
 $(RESPATH)/background-clusters/spin-glass/plot-pc-%.png: $(PREPATH)/plot-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/pc-%/*
 	$(RPATH) $> $(dir $(lastword $^)) $@
 
+touchdates:
+	for d in $(DATAPATH)/background-clusters/spin-glass/*; do touch $d/*; done;
 
 #$(DATAPATH)/background-clusters/spin-glass/%-pc.$(RDS): $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS)
 #	$(RPATH) $^ $@
