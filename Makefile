@@ -217,6 +217,9 @@ bg-spinglass-pc-%.pbs: pc_pbs.sh
 	rm -f $@; touch $@
 	./$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/agg-$* | wc -l))
 
+touchdates:
+	for d in $(DATAPATH)/background-clusters/spin-glass/*; do touch $$d/*; done;
+
 .SECONDEXPANSION:
 
 # this make target is for individual files, corresponding to those in base-%
@@ -235,9 +238,6 @@ $(DATAPATH)/background-clusters/spin-glass/pc-%: $(PREPATH)/spinglass-persistenc
 
 $(RESPATH)/background-clusters/spin-glass/plot-pc-%.png: $(PREPATH)/plot-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/pc-%/*
 	$(RPATH) $> $(dir $(lastword $^)) $@
-
-touchdates:
-	for d in $(DATAPATH)/background-clusters/spin-glass/*; do touch $d/*; done;
 
 #$(DATAPATH)/background-clusters/spin-glass/%-pc.$(RDS): $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS)
 #	$(RPATH) $^ $@
