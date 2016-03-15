@@ -201,18 +201,13 @@ bg-spinglass-base-%.pbs: base_pbs.sh
 
 # this make target is a whole directory of files
 $(DATAPATH)/background-clusters/spin-glass/base-%: $(PREPATH)/background-spinglass.R $(DATAPATH)/raw-pairs.$(RDS) | $(DATAPATH)/background-clusters/spin-glass
-	mkdir -p $@
+	mkdir -p $(dir $@)
 	$(RPATH) $^ $(subst -, ,$(basename $(subst base-,,$(notdir $@)))) $@$(if $(PCL), -m $(PCL))
 
 
 bg-spinglass-acc-%.pbs: acc_pbs.sh
 	rm -f $@; touch $@
 	./$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/base-$* | wc -l))
-
-# this make target is for individual files, corresponding to those in base-%
-$(DATAPATH)/background-clusters/spin-glass/acc-%: $(PREPATH)/precompute-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/base-% | $(DATAPATH)/background-clusters/spin-glass
-	mkdir -p $(dir $@)
-	$(RPATH) $^ $@
 
 bg-spinglass-agg-%.pbs: agg_pbs.sh
 	rm -f $@; touch $@
@@ -224,9 +219,15 @@ bg-spinglass-pc-%.pbs: pc_pbs.sh
 
 .SECONDEXPANSION:
 
-$(DATAPATH)/background-clusters/spin-glass/agg-%: $(PREPATH)/accumulate-spinglass-persistence-scores.R $(DATAPATH)/background-clusters/spin-glass/acc-$$*/*
-	mkdir -p $@
-	$(RPATH) $< $(subst agg,acc,$@) $@
+# this make target is for individual files, corresponding to those in base-%
+$(DATAPATH)/background-clusters/spin-glass/acc-%: $(PREPATH)/precompute-spinglass-persistence-scores.R $(dir $(DATAPATH)/background-clusters/spin-glass/base-$$*)
+	mkdir -p $(dir $@)
+	$(RPATH) $^ $@
+
+
+$(DATAPATH)/background-clusters/spin-glass/agg-%: $(PREPATH)/accumulate-spinglass-persistence-scores.R $(subst agg,acc,$(dir $$@))*
+	mkdir -p $(dir $@)
+	$(RPATH) $< $(subst agg,acc,$(dir $@)) $@
 
 $(DATAPATH)/background-clusters/spin-glass/pc-%: $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/agg-%
 	mkdir -p $(dir $@)
