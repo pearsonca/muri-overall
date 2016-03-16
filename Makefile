@@ -19,7 +19,7 @@ RDS := rds
 JSN := json
 IMG := png
 
-.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience updates status clean-pbs touchdates
+.PHONY: starts clean-scala clean-rdata clean-rds simulate convenience updates status clean-pbs touchdates check-err
 
 convenience: $(DATAPATH) $(RESPATH) $(PREPATH) $(DATAPATH)/training-locations.$(RDS)
 
@@ -187,8 +187,8 @@ PCL=10 # pre compute limit default
 clean-pbs:
 	rm *.pbs
 
-check-err:
-	ls *err* && ! more *err* | grep -i error && ! more *err* | grep -i warning
+check-err: checkpbserr.sh
+	./$<
 
 clean-hpc:
 	rm *.err*
