@@ -220,6 +220,9 @@ bg-spinglass-pc-%.pbs: pc_pbs.sh
 touchdates:
 	for d in $(DATAPATH)/background-clusters/spin-glass/*; do touch $$d/*; done;
 
+convenientqsub: # use like make convenientqsub tar=pc
+	for f in *$(tar)*.pbs; do qsub $f; done;
+
 .SECONDEXPANSION:
 
 # this make target is for individual files, corresponding to those in base-%
