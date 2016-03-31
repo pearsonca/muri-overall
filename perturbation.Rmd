@@ -1,0 +1,18 @@
+---
+output: pdf_document
+---
+# Generating a Synthetic Group
+
+To generate a synthetic population, first we choose a *template* (or templates) for the individuals in that population.  The template is a population from the background with shared properties.  In our analysis, we attempted to identify clusters of users (from the sub population of users that appeared for longer durations in the time series) based on the hot spots they used, and those background clusters became the templates.
+
+To create a synthetic individual from the template population, we sample (with replacement) members of that population.  The real members use locations from various clusters over their life.  We select locations from the same clusters (though not necessarily the same locations) for the synthetic individual to use over their life.  Finally, the synthetic individual adopts the real users observed behavior statistics (*e.g.*, waiting time distribution between hot spot access).
+
+With the synthetic individuals created, we create a synthetic group by connecting the synthetic individuals and assigning that connection a meeting hotspot and frequency.  During the simulation, group members will occasionally meet in addition to their individual behavior.  These meetings happen according to the connection frequency and at the associated location.  The simplest group simply connects all members, assigns all those connections the same frequency and location.
+
+# Perturbations
+
+After running a synthetic group simulation, the next step is to integrate the group into the background for the detection analysis.  For that, we need to assign their persistence communities and therefore their snapshot communities first.
+
+To assign snapshot communities, we generate the time and place overlap series for the synthetic group and the background, as well as the synthetic-to-synthetic overlaps (due to either group meetings or incidental overlaps).  We then consider interval slices of this series and look at the connections of the synthetic individuals to the identified background communities.  The spin-glass algorithm used for the background can consider individual vertices and determine the community around them.  So we recreate the network in that interval, and then detect the perturbed community for each synthetic individual.  However, these communities are unlikely to overlap exactly the pre-identified communities.  To resolve that, we assign synthetic individuals to the consensus snapshot community of the background individuals to which they are connected.
+
+Now, we can perform the persistence scoring for the synthetic individuals.  Again, we can look at each interval with persistence score edges, use spin-glass on the adapted networks to determine the communities for the synthetic individuals, and finally determine the consensus persistence communities for these individuals.
