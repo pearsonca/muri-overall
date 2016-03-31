@@ -258,6 +258,8 @@ simulate: $(SIMPATH)$(START)
 process: $(DIGESTPATH)$(START)
 	@cd $(DIGESTPATH); ./$(START) $(ARGS)
 
+%.pdf: %.Rmd
+	R CMD Sweave $(notdir $*).Rmd && pdflatex $(notdir $*) && bibtex $(notdir $*) && pdflatex $(notdir $*) && pdflatex $(notdir $*) && open $(notdir $*).pdf
 
 $(POSTER)/%.pdf: $(POSTER)/%.Rnw $(POSTER)/*.bib
 	cd $(POSTER) && R CMD Sweave $(notdir $*).Rnw && pdflatex $(notdir $*) && bibtex $(notdir $*) && pdflatex $(notdir $*) && pdflatex $(notdir $*) && open $(notdir $*).pdf

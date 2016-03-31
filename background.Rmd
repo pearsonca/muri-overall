@@ -1,0 +1,28 @@
+---
+output:
+  pdf_document:
+    fig_caption: true
+---
+## General Approach: Background Plus Synthetic Perturbations
+
+For relatively large empirical data sets, applying detection algorithms many times with many different synthetic populations, different detection thresholds, *etc.* is likely to be computationally prohibitive.  This problem is not necessarily reflected in real-world application of those approaches: since there will not be multiple sampling replicates for the purpose of validation, there will only be as many runs as are required to apply the approach once.  Additionally, the data will be arriving in smaller, real time chunks and the analysis time will be spread out to accommodate that.
+
+To deal with this issue in the validation studies, however, we have taken the approach of (for a particular detection algorithm) pre-computing some measures on the background population without any synthetic group present.  Since analyzing the background population is by far the largest contributor to run time, this means that the majority of computation can be done once, and that introducing the synthetic activities and then applying the detection algorithm to them can be done as a relatively fast-running perturbation calculation.
+
+## Background
+
+For the detection algorithm we are considering, there are two stages of community detection.
+
+The first is applied to snapshots of the data: *i.e.* in particular time interval, we look at all the overlapping (location and time) hot spot visits, and draw edges between them.  Using those edges (weighted in our approach by the number of overlapping interactions), the community structure can be computed: we call the resulting groups *snapshot communities*.  We use the spin-glass approach because it is available pre-implemented in a common graph analysis package (igraph) and it can use weighted edge information.
+
+The second stage entails tracking shared community membership between individuals across intervals and scoring that co-membership between individuals.  These scores, when above a certain threshold, are treated as weighted edges between individuals, and again we can run a community structure computation: we call the resulting groups *persistence communities*.  We also use the spin-glass algorithm for this analysis.
+
+For those stages in the detection algorithm, we can pre-compute both sets of communities for the background population absent the perturbing covert group.  The following figures show (Fig. X) the evolution of snapshot community count and size distribution and (Fig. Y) the evolution of persistence community counts and sizes distribution.
+
+![Snapshot Community Counts](output/background-clusters/spin-glass/base_cluster_trends_count.png)
+
+![Snapshot Community Size Distributions](output/background-clusters/spin-glass/base_cluster_trends_distro.png)
+
+![Persistence Community Counts](output/background-clusters/spin-glass/pc_cluster_trends_count.png)
+
+![Persistence Community Size Distributions](output/background-clusters/spin-glass/pc_cluster_trends_distro.png)
