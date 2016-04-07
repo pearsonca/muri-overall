@@ -9,10 +9,11 @@ RESPATH    := ./output
 PREPATH    := ../montreal-digest
 SIMPATH    := ../scala-commsim
 DIGESTPATH := ../montreal-reprocess
+DETECTPATH := ../montreal-detect
 POSTER     := ../epi_research_day2016
 START      := /target/start
 
-REPOS := $(PREPATH) $(SIMPATH) $(DIGESTPATH) $(POSTER)
+REPOS := $(PREPATH) $(SIMPATH) $(DIGESTPATH) $(POSTER) $(DETECTPATH)
 
 RDT := rdata
 RDS := rds
@@ -78,8 +79,21 @@ clean-rds:
 clean-img:
 	rm -i $(RESPATH)/*.$(IMG)
 
+# understands % == (un)matched/
+$(DATAPATH)/%-covert-in.csv:
+	mkdir -p $(dir $@)
+	$(PREPATH)/mk_users.R $(subst /, ,$*)$(if $(v), -v)
 
+$(RESPATH)/%-covert-out.csv: $(SIMPATH)$(START) $(DATAPATH)/%-covert-in.csv
+	mkdir -p $(dir $@)
+	$^ $(if $(k),$(k),10) $(if $(mn),$(mn),7) $(if $(y),$(y),4) > $@
 
+$(RESPATH)/%-covert-trans.csv: $(PREPATH)/translate.R $(DATAPATH)/remap-location-ids.$(RDS) $(RESPATH)/%-covert-out.csv
+	$(RPATH) $^ $@ 20649600
+
+$(RESPATH)/%-covert-cc.csv $(RESPATH)/%-covert-cu.csv: $(DIGESTPATH)$(START) $(RESPATH)/%-covert-trans.csv
+	$^$(if $(window), $(window))
+	# read in rds, remap user ids
 
 
 ~/.Renviron: Makefile
@@ -118,6 +132,8 @@ $(DATAPATH)/training-locations.$(RDS): $(DATAPATH)/remap-location-ids.$(RDS) $(D
 $(DATAPATH)/location-peaks.$(RDS): $(DATAPATH)/training-locations.$(RDS) $(DATAPATH)/remapped-input.$(RDS)
 
 
+$(DATAPATH)/reverse-location-id-map.csv: $(PREPATH)/reverse-location-id-map-csv.R $(DATAPATH)/remap-location-ids.$(RDS)
+	$(RPATH) $^ $@
 
 
 

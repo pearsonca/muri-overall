@@ -1,0 +1,25 @@
+## Detection Overview
+
+The goal of the framework is to assess the real-time performance of different detection algorithms.  Thus, a detection algorithm is some process that receives the history of events up to a certain point and then predicts which people are and are not members of the covert group.
+
+## Community Persistence Measure
+
+To demonstrate the framework, we consider a detection scheme based on persistent community co-membership.  The detection scheme considers history at regular intervals (15 or 30 days), and identifies traditional social network communities based on co-location during a window of time (the past 15 or 30 days).  Communities are established using the spin-glass community algorithm, with weighted connections.  The edge weights between individuals are equal to the number of co-location appearances in that window (TODO: consider weight based on total duration of co-location?).
+
+At this point, we consider a different connection graph: $\delta_{ij}(t) = 1$ if individuals $i$, $j$ are in the same community in interval $t$ and 0 otherwise.  Then, the community persistence score is
+
+$$
+S_{ij}(t) = \delta_{ij}(t) + \sum_{n=1}^{t-1}\delta_{ij}(t-n)r^n
+$$
+
+where $r$ is a tunable decay rate.  We can use these persistence scores as edge weights, and compute *persistence communities*, again using the spin-glass community detection algorithm.  Persistence communities that fit our beliefs about the size of covert groups--more than 2 members, fewer than 30--are implicated as potential covert groups.
+
+## Precomputing Background
+
+Since community detection is expensive computationally, for the purposes of assessment we precompute the background.  We can then add the covert members, and determine their community membership based on their connections to the existing communities and new covert community.  From that, we can update persistence scores, and then determine their persistence community membership based on the existing persistence communities as well as a new covert persistence community.  In this way, the covert members can be treated as a computationally tractable perturbation to the partitioning problem, rather than re-computing the problem for every sample.
+
+In a real application, an analyst would only be performing the computation once per interval on the real running data set.  The necessity of pre-computation and perturbations is a consequence of the evaluation procedure, not expected use.
+
+## Evaluation
+
+TBD
