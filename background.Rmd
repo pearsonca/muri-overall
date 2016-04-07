@@ -9,7 +9,9 @@ For relatively large empirical data sets, applying detection algorithms many tim
 
 To deal with this issue in the validation studies, however, we have taken the approach of (for a particular detection algorithm) pre-computing some measures on the background population without any synthetic group present.  Since analyzing the background population is by far the largest contributor to run time, this means that the majority of computation can be done once, and that introducing the synthetic activities and then applying the detection algorithm to them can be done as a relatively fast-running perturbation calculation.
 
-## Background
+## Background: The Population Using the Municipal Montreal Wi-Fi System
+
+For our background, we use the usage data from the municipal Montreal Wi-Fi system.  That data comprises the series of login events by unique user id at unique location id, with start and end times.
 
 For the detection algorithm we are considering, there are two stages of community detection.
 
