@@ -234,7 +234,10 @@ bg-spinglass-pc-%.pbs: pc_pbs.sh
 	./$< $@ $* $(strip $(shell ls $(DATAPATH)/background-clusters/spin-glass/agg-$* | wc -l))
 
 touchdates:
-	for d in $(DATAPATH)/background-clusters/spin-glass/*; do touch $$d/*; done;
+	for d in $(DATAPATH)/background-clusters/spin-glass/pc-*; do touch $$d/*; done;
+	for d in $(DATAPATH)/background-clusters/spin-glass/agg-*; do touch $$d/*; done;
+	for d in $(DATAPATH)/background-clusters/spin-glass/acc-*; do touch $$d/*; done;
+	for d in $(DATAPATH)/background-clusters/spin-glass/base-*; do touch $$d/*; done;
 
 convenientqsub: # use like make convenientqsub tar=pc
 	for f in *$(tar)*.pbs; do qsub $f; done;
