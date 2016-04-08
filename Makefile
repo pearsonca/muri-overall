@@ -239,6 +239,13 @@ touchdates:
 convenientqsub: # use like make convenientqsub tar=pc
 	for f in *$(tar)*.pbs; do qsub $f; done;
 
+# %.pdf: %.Rmd
+# 	R CMD Sweave $(notdir $*).Rmd && pdflatex $(notdir $*) && bibtex $(notdir $*) && pdflatex $(notdir $*) && pdflatex $(notdir $*) && open $(notdir $*).pdf
+#
+# $(POSTER)/%.pdf: $(POSTER)/%.Rnw $(POSTER)/*.bib
+# 	cd $(POSTER) && R CMD Sweave $(notdir $*).Rnw && pdflatex $(notdir $*) && bibtex $(notdir $*) && pdflatex $(notdir $*) && pdflatex $(notdir $*) && open $(notdir $*).pdf
+
+
 .SECONDEXPANSION:
 
 # this make target is for individual files, corresponding to those in base-%
@@ -273,9 +280,3 @@ simulate: $(SIMPATH)$(START)
 
 process: $(DIGESTPATH)$(START)
 	@cd $(DIGESTPATH); ./$(START) $(ARGS)
-
-%.pdf: %.Rmd
-	R CMD Sweave $(notdir $*).Rmd && pdflatex $(notdir $*) && bibtex $(notdir $*) && pdflatex $(notdir $*) && pdflatex $(notdir $*) && open $(notdir $*).pdf
-
-$(POSTER)/%.pdf: $(POSTER)/%.Rnw $(POSTER)/*.bib
-	cd $(POSTER) && R CMD Sweave $(notdir $*).Rnw && pdflatex $(notdir $*) && bibtex $(notdir $*) && pdflatex $(notdir $*) && pdflatex $(notdir $*) && open $(notdir $*).pdf
