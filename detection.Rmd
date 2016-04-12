@@ -1,25 +1,34 @@
+---
+output:
+  pdf_document:
+    fig_caption: true
+---
 ## Detection Overview
 
 The goal of the framework is to assess the real-time performance of different detection algorithms.  Thus, a detection algorithm is some process that receives the history of events up to a certain point and then predicts which people are and are not members of the covert group.
 
+Depending on the data available and model representation, *membership* in the covert group could entail a variety of outcomes.  For our purposes, we will only be considering social network representations, and the natural measure of group membership is shared network community.  Communities in a social network model are precisely defined in different ways for different purposes, but these different exact definitions generally share a notion of members in a community tending to be connected to each other and not connected to individuals in other communities.
+
+## The Spin-Glass Community Definition
+
+Throughout, we will define social network communities as those detected by the *spin-glass* algorithm.  Spin-glass refers to a statistical physics phenomena, where components of a system have a property *spin* and those components prefer to align with adjacent components of the same spin and anti-align with those of different spin.  This preference is expressed in terms of energy, and spin-glass systems seek to minimize their energy.  Magnets obey, in a loose sense, this kind of organization, but a spin-glass permits an arbitrary number of poles.  The spin-glass communities of some network are the arrangement of individuals into communities, each assigned a unique spin, such that alignment and anti-alignment energies of connected individuals is minimal.  The spin-glass community definition supports weighted connections between individuals (both positive and negative, though we only use positive weights), essentially assigning more potential energy change to more heavily weighted edges.  The algorithm for detecting the appropriate number of and membership assignment to spin-glass communities is done by a simulated-annealing style algorithm.
+
 ## Community Persistence Measure
 
-To demonstrate the framework, we consider a detection scheme based on persistent community co-membership.  The detection scheme considers history at regular intervals (15 or 30 days), and identifies traditional social network communities based on co-location during a window of time (the past 15 or 30 days).  Communities are established using the spin-glass community algorithm, with weighted connections.  The edge weights between individuals are equal to the number of co-location appearances in that window (TODO: consider weight based on total duration of co-location?).
+To demonstrate the framework, we consider a detection scheme based on persistent community co-membership.  The detection scheme considers regular intervals (15 or 30 days), and aggregates events (two users logging into the same hot spot at the same time, which we interpret to mean that those individuals are both physically located at the building associated with the hotspot) during a window of time (the past 15 or 30 days) which we translate into social networks of people (unique system user ids) and connections (number of co-location).  Using this weighted network, communities are established using the spin-glass community algorithm.  The edge weights between individuals are equal to the number of co-location appearances in that window.
 
-At this point, we consider a different connection graph: $\delta_{ij}(t) = 1$ if individuals $i$, $j$ are in the same community in interval $t$ and 0 otherwise.  Then, the community persistence score is
+We call these communities the "snapshot" communities.  For the next stage, we consider persistent co-membership in communities.  For this calculation, we consider a different connection graph, using an edge weight derived from $\delta_{ij}(t) = 1$ if individuals $i$, $j$ are in the same community in interval $t$ and 0 otherwise.  Then, the community persistence score is
 
 $$
 S_{ij}(t) = \delta_{ij}(t) + \sum_{n=1}^{t-1}\delta_{ij}(t-n)r^n
 $$
 
-where $r$ is a tunable decay rate.  We can use these persistence scores as edge weights, and compute *persistence communities*, again using the spin-glass community detection algorithm.  Persistence communities that fit our beliefs about the size of covert groups--more than 2 members, fewer than 30--are implicated as potential covert groups.
+where $r$ is a tunable decay rate.  We can use these persistence scores as edge weights, and compute *persistence communities*, again using the spin-glass community detection algorithm.
 
-## Precomputing Background
+## Labeling Covert Groups
 
-Since community detection is expensive computationally, for the purposes of assessment we precompute the background.  We can then add the covert members, and determine their community membership based on their connections to the existing communities and new covert community.  From that, we can update persistence scores, and then determine their persistence community membership based on the existing persistence communities as well as a new covert persistence community.  In this way, the covert members can be treated as a computationally tractable perturbation to the partitioning problem, rather than re-computing the problem for every sample.
+At each time interval, we want to label some subset of the population as covert group members.  As more information becomes available (*i.e.*, as we move to the next interval), we should update those labels.  The persistence communities should reflect evolving knowledge: as interactions grow and wane, the associated persistence communities also change.  For users that remain consistent members of small persistence communities, based on a prior belief on how covert groups should behave (relative loners, essentially, working in small groups), we want to mark individuals that appear in small groups as potential covert members.  To so, at each interval, we label all members of all persistence communities that fit our beliefs about the size of covert groups--more than 2 members, fewer than 30--as potential covert group members.
 
-In a real application, an analyst would only be performing the computation once per interval on the real running data set.  The necessity of pre-computation and perturbations is a consequence of the evaluation procedure, not expected use.
+## Evaluating Persistence Communities
 
-## Evaluation
-
-TBD
+In our framework, we know the truth about the covert membership.  We can then consider how the approach of labeling all small persistence communities as "covert" fairs: how many members of the covert group appear in these groups versus how many are missed?  How many regular users are falsely implicated?
