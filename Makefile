@@ -58,11 +58,10 @@ cd $(1); ln -sf $(2)$(3);
 
 endef
 
-$(DATAPATH) $(RESPATH): $(REPOS)
-	touch $@
+$(DATAPATH) $(RESPATH):
 	$(eval TMP:=$(abspath $@))
 	ln -sf $(tar) $@
-	$(foreach p, $^, $(call link_data,$(p),$(TMP), $@))
+#	$(foreach p, $^, $(call link_data,$(p),$(TMP), $@))
 
 starts: $(SIMPATH)$(START) $(DIGESTPATH)$(START)
 
