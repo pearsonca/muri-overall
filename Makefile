@@ -251,12 +251,12 @@ convenientqsub: # use like make convenientqsub tar=pc
 .SECONDEXPANSION:
 
 # this make target is for individual files, corresponding to those in base-%
-$(DATAPATH)/background-clusters/spin-glass/acc-%: $(PREPATH)/precompute-spinglass-persistence-scores.R $(dir $(DATAPATH)/background-clusters/spin-glass/base-$$*)
+$(DATAPATH)/background-clusters/spin-glass/acc-%: $(PREPATH)/precompute-spinglass-persistence-scores.R $$(dir $(DATAPATH)/background-clusters/spin-glass/base-$$*)
 	mkdir -p $(dir $@)
 	$(RPATH) $^ $@
 
 
-$(DATAPATH)/background-clusters/spin-glass/agg-%: $(PREPATH)/accumulate-spinglass-persistence-scores.R $(subst agg,acc,$(dir $$@))*
+$(DATAPATH)/background-clusters/spin-glass/agg-%: $(PREPATH)/accumulate-spinglass-persistence-scores.R $$(subst agg,acc,$$@)*
 	mkdir -p $(dir $@)
 	$(RPATH) $< $(subst agg,acc,$(dir $@)) $@
 
