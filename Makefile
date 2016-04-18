@@ -271,22 +271,22 @@ $(RESPATH)/background-clusters/spin-glass/plot-pc-%.png: $(PREPATH)/plot-persist
 #	$(RPATH) $^ $@
 
 $(RESPATH)/matched/: | $(RESPATH)/
-	touch $@
+	mkdir $@
 
 $(RESPATH)/matched/mid/: | $(RESPATH)/matched/
-	touch $@
+	mkdir $@
 
 $(RESPATH)/matched/mid/lo/: | $(RESPATH)/matched/mid/
-	touch $@
+	mkdir $@
 
 $(RESPATH)/matched/mid/lo/late/: | $(RESPATH)/matched/mid/lo/
-	touch $@
+	mkdir $@
 
 $(RESPATH)/matched/mid/lo/late/10/: | $(RESPATH)/matched/mid/lo/late/
-	touch $@
+	mkdir $@
 
 $(RESPATH)/matched/mid/lo/late/10/001-covert-0/: | $(RESPATH)/matched/mid/lo/late/10/
-	touch $@
+	mkdir $@
 
 $(RESPATH)/matched/mid/lo/late/10/001-covert-0-base.rds: $(DETECTPATH)/pre-spinglass-detect.R $(DATAPATH)/raw-pairs.rds $(DATAPATH)/raw-location-lifetimes.rds $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/lo/late/10/001-covert-0/ | $(RESPATH)/matched/mid/lo/late/10/001-covert-0-cc.csv $(RESPATH)/matched/mid/lo/late/10/001-covert-0-cu.csv
 	$(RPATH) $^ $@
@@ -298,16 +298,16 @@ $(RESPATH)/matched/mid/lo/late/10/001-covert-0/%.rds: $(DETECTPATH)/spinglass-de
 	$(RPATH) $^
 
 $(RESPATH)/matched/mid/med/: | $(RESPATH)/matched/mid/
-	touch $@
+	mkdir $@
 
 $(RESPATH)/matched/mid/med/middle/: | $(RESPATH)/matched/mid/med/
-	touch $@
+	mkdir $@
 
 $(RESPATH)/matched/mid/med/middle/10/: | $(RESPATH)/matched/mid/med/middle/
-	touch $@
+	mkdir $@
 
 $(RESPATH)/matched/mid/med/middle/10/001-covert-0/: | $(RESPATH)/matched/mid/med/middle/10/
-	touch $@
+	mkdir $@
 
 $(RESPATH)/matched/mid/med/middle/10/001-covert-0-base.rds: $(DETECTPATH)/pre-spinglass-detect.R $(DATAPATH)/raw-pairs.rds $(DATAPATH)/raw-location-lifetimes.rds $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/med/middle/10/001-covert-0/ | $(RESPATH)/matched/mid/med/middle/10/001-covert-0-cc.csv $(RESPATH)/matched/mid/med/middle/10/001-covert-0-cu.csv
 	$(RPATH) $^ $@
