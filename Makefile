@@ -288,7 +288,7 @@ $(RESPATH)/matched/mid/lo/late/10/: | $(RESPATH)/matched/mid/lo/late/
 $(RESPATH)/matched/mid/lo/late/10/001-covert-0/: | $(RESPATH)/matched/mid/lo/late/10/
 	touch $@
 
-$(RESPATH)/matched/mid/lo/late/10/001-covert-0-base.rds: $(DETECTPATH)/pre-spinglass-detect.R $(DATAPATH)/raw-pairs.rds $(DATAPATH)/raw-location-lifetimes.rds $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/lo/late/10/001-covert-0 | $(RESPATH)/matched/mid/lo/late/10/001-covert-0-cc.csv $(RESPATH)/matched/mid/lo/late/10/001-covert-0-cu.csv
+$(RESPATH)/matched/mid/lo/late/10/001-covert-0-base.rds: $(DETECTPATH)/pre-spinglass-detect.R $(DATAPATH)/raw-pairs.rds $(DATAPATH)/raw-location-lifetimes.rds $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/lo/late/10/001-covert-0/ | $(RESPATH)/matched/mid/lo/late/10/001-covert-0-cc.csv $(RESPATH)/matched/mid/lo/late/10/001-covert-0-cu.csv
 	$(RPATH) $^ $@
 
 $(RESPATH)/matched/mid/lo/late/10/001-covert-0/%-acc.rds: $(DETECTPATH)/pre-spinglass-score.R $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/lo/late/10/001-covert-0-base.rds $(RESPATH)/matched/mid/lo/late/10/001-covert-0
@@ -306,7 +306,7 @@ $(RESPATH)/matched/mid/med/middle/: | $(RESPATH)/matched/mid/med/
 $(RESPATH)/matched/mid/med/middle/10/: | $(RESPATH)/matched/mid/med/middle/
 	touch $@
 
-$(RESPATH)/matched/mid/med/middle/10/001-covert-0-base.rds: $(DETECTPATH)/pre-spinglass-detect.R $(DATAPATH)/raw-pairs.rds $(DATAPATH)/raw-location-lifetimes.rds $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/med/middle/10/001-covert-0 | $(RESPATH)/matched/mid/med/middle/10/001-covert-0-cc.csv $(RESPATH)/matched/mid/lo/late/10/001-covert-0-cu.csv
+$(RESPATH)/matched/mid/med/middle/10/001-covert-0-base.rds: $(DETECTPATH)/pre-spinglass-detect.R $(DATAPATH)/raw-pairs.rds $(DATAPATH)/raw-location-lifetimes.rds $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/med/middle/10/001-covert-0/ | $(RESPATH)/matched/mid/med/middle/10/001-covert-0-cc.csv $(RESPATH)/matched/mid/lo/late/10/001-covert-0-cu.csv
 	$(RPATH) $^ $@
 
 $(RESPATH)/matched/mid/med/middle/10/001-covert-0/%-acc.rds: $(DETECTPATH)/pre-spinglass-score.R $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/med/middle/10/001-covert-0-base.rds $(RESPATH)/matched/mid/med/middle/10/001-covert-0
