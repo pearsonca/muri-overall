@@ -270,6 +270,47 @@ $(RESPATH)/background-clusters/spin-glass/plot-pc-%.png: $(PREPATH)/plot-persist
 #$(DATAPATH)/background-clusters/spin-glass/%-pc.$(RDS): $(PREPATH)/spinglass-persistence-communities.R $(DATAPATH)/background-clusters/spin-glass/%-acc.$(RDS)
 #	$(RPATH) $^ $@
 
+$(RESPATH)/matched/: | $(RESPATH)/
+	touch $@
+
+$(RESPATH)/matched/mid/: | $(RESPATH)/matched/
+	touch $@
+
+$(RESPATH)/matched/mid/lo/: | $(RESPATH)/matched/mid/
+	touch $@
+
+$(RESPATH)/matched/mid/lo/late/: | $(RESPATH)/matched/mid/lo/
+	touch $@
+
+$(RESPATH)/matched/mid/lo/late/10/: | $(RESPATH)/matched/mid/lo/late/
+	touch $@
+
+$(RESPATH)/matched/mid/lo/late/10/001-covert-0/: | $(RESPATH)/matched/mid/lo/late/10/
+	touch $@
+
+$(RESPATH)/matched/mid/lo/late/10/001-covert-0-base.rds: $(DETECTPATH)/pre-spinglass-detect.R $(DATAPATH)/raw-pairs.rds $(DATAPATH)/location-lifetimes.rds $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/lo/late/10/001-covert-0 | $(RESPATH)/matched/mid/lo/late/10/001-covert-0-cc.csv $(RESPATH)/matched/mid/lo/late/10/001-covert-0-cu.csv
+	$(RPATH) $^ $@
+
+$(RESPATH)/matched/mid/lo/late/10/001-covert-0/%-acc.rds: $(DETECTPATH)/pre-spinglass-score.R $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/lo/late/10/001-covert-0-base.rds $(RESPATH)/matched/mid/lo/late/10/001-covert-0
+	$(RPATH) $^
+
+$(RESPATH)/matched/mid/lo/late/10/001-covert-0/%.rds: $(DETECTPATH)/spinglass-detect.R $(DATAPATH)/background-clusters/spin-glass/agg-15-30/%.rds $(DATAPATH)/background-clusters/spin-glass/pc-15-30/%.rds $(RESPATH)/matched/mid/lo/late/10/001-covert-0/%-acc.rds
+	$(RPATH) $^
+
+$(RESPATH)/matched/mid/med/: | $(RESPATH)/matched/mid/
+	touch $@
+
+$(RESPATH)/matched/mid/med/middle/: | $(RESPATH)/matched/mid/med/
+	touch $@
+
+$(RESPATH)/matched/mid/med/middle/10/: | $(RESPATH)/matched/mid/med/middle/
+	touch $@
+
+$(RESPATH)/matched/mid/med/middle/10/001-covert-0/%-acc.rds: $(DETECTPATH)/pre-spinglass-score.R $(DATAPATH)/background-clusters/spin-glass/base-15-30 $(RESPATH)/matched/mid/med/middle/10/001-covert-0-base.rds $(RESPATH)/matched/mid/med/middle/10/001-covert-0
+	$(RPATH) $^
+
+$(RESPATH)/matched/mid/med/middle/10/001-covert-0/%.rds: $(DETECTPATH)/spinglass-detect.R $(DATAPATH)/background-clusters/spin-glass/agg-15-30/%.rds $(DATAPATH)/background-clusters/spin-glass/pc-15-30/%.rds $(RESPATH)/matched/mid/med/middle/10/001-covert-0/%-acc.rds
+	$(RPATH) $^
 
 $(RESPATH)/%.$(IMG): $(PREPATH)/%-plot.R
 	$(RPATH) $^ $@
