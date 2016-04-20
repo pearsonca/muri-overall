@@ -19,6 +19,8 @@ SIM := $(SIMPATH)/target/start
 DIGPATH := ../montreal-digest
 MKUSERS := $(DIGPATH)/mk_users.R
 
+include bg-parse.mk
+
 PARSED := input/user.RData input/censor.RData input/userPrefs.RData input/locClusters.RData input/loc_probs.csv
 
 # in this rule, % is intended to be 001, 002, ... - sample ids
