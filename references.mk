@@ -1,0 +1,3 @@
+
+INDIR  := ./input
+OUTDIR := ./output
